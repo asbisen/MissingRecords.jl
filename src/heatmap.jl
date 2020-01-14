@@ -76,7 +76,7 @@ function plot( mb::Heatmap;
                width=1000, height=200,
                filterpct=0,
                title="Heatmap Missing Data",
-               color_scheme="greys"
+               color_scheme="lighttealblue"
     )
 
     df = DataFrame( mb.data )
@@ -95,13 +95,19 @@ function plot( mb::Heatmap;
     ndf[!, :row] = 1:nrow(df) # create column for y-axis
 
     sdf = stack(ndf, cols)
-    p = sdf |> @vlplot(:rect,
-                x={"variable:n", axis={title="Column Names"}},
-                y={"row:o", axis={title="Bins"}},
-                color={"value:q", scale ={scheme=color_scheme}},
-                height=height,
-                width=width,
-                title=title
+    p = sdf |> @vlplot(
+                :rect,
+                x = { "variable:n",
+                       axis = { title = "Column Names" }},
+                y = { "row:o",
+                       axis = { title = "Bins" }},
+                color = { "value:q",
+                          scale = { scheme = color_scheme },
+                          axis = { title = "Missing %" }
+                        },
+                height = height,
+                width = width,
+                title = title
                 )
     return p
 end
