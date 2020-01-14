@@ -32,16 +32,56 @@ function Heatmap(df::DataFrame; nbins=256)
     Heatmap(colnames, missing_num, missing_pct, numrows, data)
 end
 
+"""
+    plot( mb::Heatmap [, width, height, filterpct, title, color_scheme])
 
+Plot barchart using VegaLite showing percentage of missing values in each of
+the columns of a DataFrame parsed by `Heatmap`
+
+# Arguments
+- `mb`: MissingBar
+- `width::Integer=1000`: Width of the plot
+- `height::Integer=200`: Height of the plot
+- `filterpct::Float=0`: Filter out columns with missing values < `filterpct`
+- `title::String`: Default title of the plot
+- `color_schemes::String=greys`: Use any vega sequential schemes
+
+# Vega Color Schemes
+
+https://vega.github.io/vega/docs/schemes/
+
+## Single Hue Sequential
+- blues, tealblues, teals, greens, browns, oranges, reds, purples, warmgreys, greys
+
+## Multi-Hue Sequential
+- viridis, magma, inferno, plasma, bluegreen, bluepurple, goldgreen, goldorange
+- goldred, greenblue, orangered, purplebluegreen, purpleblue, purplered, redpurple
+- yellowgreenblue, yellowgreen, yelloworangebrown, yelloworangered
+
+## For Dark Background
+- darkblue, darkgold, darkgreen, darkmulti, darkred
+
+## For Light Background
+- lightgreyred, lightgreyteal, lightmulti, lightorange, lighttealblue
+
+## Diverging
+- blueorange, brownbluegreen, purplegreen, pinkyellowgreen, purpleorange
+- redblue, redgrey, redyellowblue, redyellowgreen, spectral
+
+## Cyclical
+- rainbow, sinebow
+
+"""
 function plot( mb::Heatmap;
                width=1000, height=200,
                filterpct=0,
-               title="Heatmap Missing Data"
+               title="Heatmap Missing Data",
+               color_scheme="greys"
     )
 
     df = DataFrame( mb.data )
     # create a new column with increasing numbers
-    #df[!, :row] = 1:nrow(df)
+
 
     # filter based on `filterpct`
     cols = []
@@ -50,14 +90,15 @@ function plot( mb::Heatmap;
             push!(cols, i)
         end
     end
+
     ndf = df[!, cols]
-    ndf[!, :row] = 1:nrow(df)
+    ndf[!, :row] = 1:nrow(df) # create column for y-axis
 
     sdf = stack(ndf, cols)
     p = sdf |> @vlplot(:rect,
-                x="variable:n",
-                y="row:o",
-                color={"value:q", scale ={scheme="greys"}},
+                x={"variable:n", axis={title="Column Names"}},
+                y={"row:o", axis={title="Bins"}},
+                color={"value:q", scale ={scheme=color_scheme}},
                 height=height,
                 width=width,
                 title=title

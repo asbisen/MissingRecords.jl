@@ -26,13 +26,13 @@ Base.convert(::Type{DataFrame}, mb::Bar) = DataFrame(mb)
 Base.show(io::IO, mime::MIME"text/plain", mb::Bar) = display(sort!(DataFrame(mb), :missing_num, rev=true))
 
 """
-    plot( mb[, width, height, fontSize, filterpct, printvals, title])
+    plot( mb::Bar [, width, height, fontSize, filterpct, printvals, title])
 
 Plot barchart using VegaLite showing percentage of missing values in each of
-the columns of a DataFrame parsed by `MissingBar`
+the columns of a DataFrame parsed by `Bar`
 
 # Arguments
-- `mb`: MissingBar
+- `mb`: Bar
 - `width::Integer=1000`: Width of the plot
 - `height::Integer=200`: Height of the plot
 - `fontSize::Integer=10`: Font size used to plot values (`printvals==true`)
