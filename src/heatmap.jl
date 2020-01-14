@@ -36,7 +36,7 @@ end
 function plot( mb::Heatmap;
                width=1000, height=200,
                filterpct=0,
-               title="Missing Data"
+               title="Heatmap Missing Data"
     )
 
     df = DataFrame( mb.data )
